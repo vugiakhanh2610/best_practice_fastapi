@@ -2,10 +2,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
 from typing import Generator, Any
+from setting import Setting
 
-from config.core import Setting
-
-engine = create_engine(url=Setting.DB_CONNECTION_STR, echo=False) # echo = show-sql
+engine = create_engine(url=Setting().DB_CONNECTION_STR, echo=False) # echo = show-sql
 Session = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 # inherit from this class to create each of the database models 

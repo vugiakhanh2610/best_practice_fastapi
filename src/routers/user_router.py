@@ -7,7 +7,7 @@ from database import get_session
 from schemas.user_schema import UserCreate, UserResponse
 from services.user_service import UserService
 
-router = APIRouter(prefix='/api/v1/user')
+router = APIRouter(prefix='/api/v1/user', tags=['User'])
 @cbv(router)
 class UserRouter:
   
