@@ -7,3 +7,4 @@ requests
 loguru
 psycopg2-binary
 pyclean
+passlib[bcrypt] 

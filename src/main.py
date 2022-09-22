@@ -10,7 +10,7 @@ from routers import user_router
 
 def create_table():
   logger.debug('Creating Tables')
-  Base.metadata.create_all(bind=engine)
+  Base.metadata.create_all(bind=engine, checkfirst=True)
   
 def include_router(app: FastAPI):
   logger.debug('Including Routers')
