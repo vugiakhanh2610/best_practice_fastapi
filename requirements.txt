@@ -1,0 +1,9 @@
+fastapi
+fastapi_utils
+uvicorn
+sqlalchemy
+python-dotenv
+requests
+loguru
+psycopg2-binary
+pyclean
