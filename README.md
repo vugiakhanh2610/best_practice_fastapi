@@ -3,7 +3,7 @@ conda create -n bp_fastapi python=3.9
 conda activate bp_fastapi
 pip install -r requirements.txt 
 
-# Setup pre-commit
+# Setup pre-commit (To avoid pre-commit hooks use: git commit -m "my message" --no-verify)
 put 'pre-commit' in requirements.txt 
 pip install -r requirements.txt 
 pre-commit install
