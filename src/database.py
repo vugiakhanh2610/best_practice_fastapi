@@ -1,7 +1,8 @@
+from typing import Generator
+
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
-from sqlalchemy.ext.declarative import as_declarative, declared_attr
-from typing import Generator, Any
+from sqlalchemy.orm import declarative_base, sessionmaker
+
 from setting import Setting
 
 engine = create_engine(url=Setting().DB_CONNECTION_STR, echo=False) # echo = show-sql

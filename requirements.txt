@@ -1,11 +1,11 @@
 fastapi
 fastapi_utils
-uvicorn
-sqlalchemy
-python-dotenv
-requests
 loguru
-psycopg2-binary
-pyclean
 passlib[bcrypt] 
 pre-commit
+psycopg2-binary
+pyclean
+python-dotenv
+requests
+sqlalchemy
+uvicorn

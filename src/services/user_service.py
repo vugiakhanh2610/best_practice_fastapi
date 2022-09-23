@@ -2,9 +2,10 @@ from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
-from utils.hashing_util import Hasher
 from models.user import User
 from schemas.user_schema import UserCreate, UserResponse
+from utils.hashing_util import Hasher
+
 
 class UserService: 
   
@@ -39,5 +40,5 @@ class UserService:
   def delete_by_id(session: Session, id: int):
     session.query(User).filter(User.id == id).delete()
     session.commit()
-    return "Deleted successfully"
+    return 'Deleted successfully'
   

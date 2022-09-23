@@ -1,6 +1,6 @@
 from passlib.context import CryptContext
 
-ctx = CryptContext(schemes=["bcrypt"])
+ctx = CryptContext(schemes=['bcrypt'])
 
 class Hasher:
   

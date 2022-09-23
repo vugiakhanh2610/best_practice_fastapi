@@ -1,4 +1,3 @@
-from abc import ABC
 from fastapi import APIRouter, Depends
 from fastapi_utils.cbv import cbv
 from sqlalchemy.orm import Session

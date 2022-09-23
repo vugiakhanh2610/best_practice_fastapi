@@ -1,5 +1,7 @@
 from typing import Optional
+
 from pydantic import BaseModel, Field
+
 
 class UserBase(BaseModel):
   # id: Optional[int] = None

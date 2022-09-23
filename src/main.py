@@ -1,11 +1,12 @@
-from fastapi import FastAPI, Depends
 from functools import lru_cache
+
+from fastapi import Depends, FastAPI
 from loguru import logger
 
-from setting import Setting
 from database import Base, engine
-
 from routers import user_router
+from setting import Setting
+
 
 # https://fastapi.tiangolo.com/es/advanced/settings/
 @lru_cache()

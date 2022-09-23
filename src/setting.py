@@ -1,5 +1,6 @@
-from pydantic import BaseSettings
 from dotenv import load_dotenv
+from pydantic import BaseSettings
+
 load_dotenv()
 
 class Setting(BaseSettings):
@@ -9,6 +10,6 @@ class Setting(BaseSettings):
   DB_CONNECTION_STR: str
   
   class Config:
-    env_file = ".env"
+    env_file = '.env'
     case_sensitive = True
     
