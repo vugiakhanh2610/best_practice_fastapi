@@ -1,0 +1,7 @@
+[tool.pycln]
+all = true
+
+[tool.isort]
+line_length = 200
+force_grid_wrap = 5
+use_parentheses = true
