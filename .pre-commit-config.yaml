@@ -1,0 +1,17 @@
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks # https://pre-commit.com/hooks.html
+  rev: v3.2.0
+  hooks:
+  - id: check-yaml
+  - id: check-json
+  - id: pretty-format-json
+    args: ['--autofix', '--no-sort-keys', '--indent=2']
+  - id: double-quote-string-fixer
+  - id: end-of-file-fixer
+  - id: trailing-whitespace
+  - id: requirements-txt-fixer
+  # - id: name-tests-test
+# - repo: https://github.com/pycqa/flake8
+#   rev: '4.0.1'
+#   hooks:
+#   - id: flake8
