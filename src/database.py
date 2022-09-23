@@ -6,6 +6,8 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 from setting import Setting
 
 engine = create_engine(url=Setting().DB_CONNECTION_STR, echo=False) # echo = show-sql
+
+# Difference between flush and commit: https://www.youtube.com/watch?v=1atze8xe9wg&ab_channel=HowtoFixYourComputer
 Session = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 # inherit from this class to create each of the database models 
