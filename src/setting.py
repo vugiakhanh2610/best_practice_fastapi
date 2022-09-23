@@ -1,7 +1,5 @@
-from dotenv import load_dotenv
 from pydantic import BaseSettings
 
-load_dotenv()
 
 class Setting(BaseSettings):
   PROJECT_NAME: str
