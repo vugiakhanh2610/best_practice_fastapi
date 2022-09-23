@@ -5,6 +5,7 @@ passlib[bcrypt]
 pre-commit
 psycopg2-binary
 pyclean
+pydantic[email]
 python-dotenv
 requests
 sqlalchemy
