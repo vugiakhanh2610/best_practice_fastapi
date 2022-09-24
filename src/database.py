@@ -1,3 +1,4 @@
+import contextlib
 import fnmatch
 import os
 from typing import Generator
@@ -29,18 +30,33 @@ Base = declarative_base(metadata=MetaData(schema=f'{setting.DB_SCHEMA}'))
 #     return cls.__name__.lower()
 
 def create_db():
-  logger.debug('Creating database')
+  logger.debug('Creating Database')
   if not database_exists(db_connection_url):
     create_database(db_connection_url)
 
 def create_schema():
-  logger.debug('Creating schema')
+  logger.debug('Creating Schema')
   if not engine.dialect.has_schema(engine, f'{setting.DB_SCHEMA}'):
     engine.execute(schema.CreateSchema(f'{setting.DB_SCHEMA}'))
 
-def create_table():
+def create_tables():
   logger.debug('Creating Tables')
   Base.metadata.create_all(bind=engine, checkfirst=True)
+
+def drop_tables():
+  logger.debug('Dropping Tables')
+  Base.metadata.drop_all(bind=engine, checkfirst=True)
+
+# For foreign key problem in future, refer to this solution https://gist.github.com/absent1706/3ccc1722ea3ca23a5cf54821dbc813fb
+def truncate_db():
+  logger.debug('Truncating Tables')
+  tables = Base.metadata.sorted_tables
+  
+  # calls the connection.close() method when when a block of code is entered and exited
+  with contextlib.closing(engine.connect()) as ctx:
+    transaction = ctx.begin()
+    ctx.execute('TRUNCATE TABLE {} RESTART IDENTITY CASCADE'.format(','.join(table.name for table in tables)))
+    transaction.commit()
 
 # create a database session for each request - close it after finishing the request
 def get_session() -> Generator:

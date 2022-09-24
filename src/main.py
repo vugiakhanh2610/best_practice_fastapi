@@ -3,7 +3,7 @@ from functools import lru_cache
 from fastapi import Depends, FastAPI
 from loguru import logger
 
-from database import check_db_info, create_db, create_schema, create_table
+from database import (check_db_info, create_db, create_schema, create_tables, truncate_db)
 from routers import user_router
 from setting import Setting
 
@@ -26,7 +26,7 @@ def start_application():
   )
   create_db()
   create_schema()
-  create_table()
+  create_tables()
   include_router(app)
   return app
 
@@ -41,4 +41,7 @@ async def app_startup():
   logger.debug("Checking database's information")
   await check_db_info()
 
+@app.on_event('shutdown')
+def app_shutdown():
+  truncate_db()
   
