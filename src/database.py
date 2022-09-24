@@ -13,7 +13,7 @@ from setting import Setting
 setting = Setting()
 db_connection_url = f'postgresql://{setting.DB_USER}:{setting.DB_PASSWORD}@{setting.DB_HOST}:{setting.DB_PORT}/{setting.DB_NAME}'
 
-engine = create_engine(url=db_connection_url, echo=False) # echo = show-sql
+engine = create_engine(url=db_connection_url, echo=False, connect_args={'options': f'-csearch_path={setting.DB_SCHEMA}'}) # echo = show-sql
 
 # Difference between flush and commit: https://www.youtube.com/watch?v=1atze8xe9wg&ab_channel=HowtoFixYourComputer
 Session = sessionmaker(bind=engine, autoflush=False, autocommit=False)
