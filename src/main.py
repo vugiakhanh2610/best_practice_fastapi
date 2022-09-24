@@ -3,7 +3,7 @@ from functools import lru_cache
 from fastapi import Depends, FastAPI
 from loguru import logger
 
-from database import Base, check_db_info, engine
+from database import check_db_info, create_schema, create_table
 from routers import user_router
 from setting import Setting
 
@@ -13,10 +13,6 @@ setting = Setting()
 def get_setting():
   return Setting()
 
-def create_table():
-  logger.debug('Creating Tables')
-  Base.metadata.create_all(bind=engine, checkfirst=True)
-  
 def include_router(app: FastAPI):
   logger.debug('Including Routers')
   app.include_router(user_router.router)
@@ -27,6 +23,7 @@ def start_application():
     version = setting.PROJECT_VERSION,
     contact = setting.PROJECT_OWNER
   )
+  create_schema()
   create_table()
   include_router(app)
   return app

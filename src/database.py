@@ -4,7 +4,7 @@ from typing import Generator
 
 import databases
 from loguru import logger
-from sqlalchemy import create_engine
+from sqlalchemy import MetaData, create_engine, schema
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 from setting import Setting
@@ -17,7 +17,7 @@ engine = create_engine(url=db_connection_url, echo=False) # echo = show-sql
 Session = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 # inherit from this class to create each of the database models 
-Base = declarative_base()
+Base = declarative_base(metadata=MetaData(schema=f'{setting.DB_SCHEMA}'))
 # class Base:
 #   id: Any
 #   __name__: str
@@ -25,6 +25,15 @@ Base = declarative_base()
 #   @declared_attr
 #   def __tablename__(cls) -> str:
 #     return cls.__name__.lower()
+
+def create_schema():
+  logger.debug('Creating schema')
+  if not engine.dialect.has_schema(engine, f'{setting.DB_SCHEMA}'):
+    engine.execute(schema.CreateSchema(f'{setting.DB_SCHEMA}'))
+
+def create_table():
+  logger.debug('Creating Tables')
+  Base.metadata.create_all(bind=engine, checkfirst=True)
 
 # create a database session for each request - close it after finishing the request
 def get_session() -> Generator:
@@ -44,7 +53,7 @@ async def check_db_info():
     if not db.is_connected:
       await db.connect()
       db_version = await db.execute('SELECT version()')
-      number_tables = await db.execute(f"select count(*) from information_schema.tables where table_schema = 'public'")
+      number_tables = await db.execute(f"select count(*) from information_schema.tables where table_schema = '{setting.DB_SCHEMA}'")
       number_models = get_number_models()
       
       logger.info(db_version)

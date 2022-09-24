@@ -11,6 +11,7 @@ class Setting(BaseSettings):
   DB_HOST: str
   DB_PORT: str
   DB_NAME: str
+  DB_SCHEMA: str
   
   class Config:
     env_file = '.env'
