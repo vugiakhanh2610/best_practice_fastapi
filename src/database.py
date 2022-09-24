@@ -76,7 +76,7 @@ async def check_db_info():
     if not db.is_connected:
       await db.connect()
       db_version = await db.execute('SELECT version()')
-      number_tables = await db.execute(f"select count(*) from information_schema.tables where table_schema = '{setting.DB_SCHEMA}'")
+      number_tables = await db.execute(f"SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '{setting.DB_SCHEMA}'")
       number_models = get_number_models()
       
       logger.info(db_version)
