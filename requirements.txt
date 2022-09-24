@@ -11,4 +11,5 @@ pydantic[email]
 python-dotenv
 requests
 sqlalchemy
+sqlalchemy_utils
 uvicorn

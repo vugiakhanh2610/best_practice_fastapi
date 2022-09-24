@@ -6,11 +6,13 @@ import databases
 from loguru import logger
 from sqlalchemy import MetaData, create_engine, schema
 from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy_utils.functions import create_database, database_exists
 
 from setting import Setting
 
 setting = Setting()
 db_connection_url = f'postgresql://{setting.DB_USER}:{setting.DB_PASSWORD}@{setting.DB_HOST}:{setting.DB_PORT}/{setting.DB_NAME}'
+
 engine = create_engine(url=db_connection_url, echo=False) # echo = show-sql
 
 # Difference between flush and commit: https://www.youtube.com/watch?v=1atze8xe9wg&ab_channel=HowtoFixYourComputer
@@ -25,6 +27,11 @@ Base = declarative_base(metadata=MetaData(schema=f'{setting.DB_SCHEMA}'))
 #   @declared_attr
 #   def __tablename__(cls) -> str:
 #     return cls.__name__.lower()
+
+def create_db():
+  logger.debug('Creating database')
+  if not database_exists(db_connection_url):
+    create_database(db_connection_url)
 
 def create_schema():
   logger.debug('Creating schema')

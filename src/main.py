@@ -3,11 +3,12 @@ from functools import lru_cache
 from fastapi import Depends, FastAPI
 from loguru import logger
 
-from database import check_db_info, create_schema, create_table
+from database import check_db_info, create_db, create_schema, create_table
 from routers import user_router
 from setting import Setting
 
 setting = Setting()
+
 # https://fastapi.tiangolo.com/es/advanced/settings/
 @lru_cache()
 def get_setting():
@@ -23,6 +24,7 @@ def start_application():
     version = setting.PROJECT_VERSION,
     contact = setting.PROJECT_OWNER
   )
+  create_db()
   create_schema()
   create_table()
   include_router(app)
