@@ -5,7 +5,7 @@ from database import Base
 
 
 class User(Base):
-  __tablename__ = 'user'
+  __tablename__ = 'users'
   id = Column(Integer, primary_key=True) # Auto-increment should be default
   username = Column(String, nullable=False)
   email = Column(String, nullable=False)
