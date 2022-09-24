@@ -7,7 +7,7 @@ from database import Base, check_db_info, engine
 from routers import user_router
 from setting import Setting
 
-
+setting = Setting()
 # https://fastapi.tiangolo.com/es/advanced/settings/
 @lru_cache()
 def get_setting():
@@ -23,9 +23,9 @@ def include_router(app: FastAPI):
   
 def start_application():
   app = FastAPI(
-    title = Setting().PROJECT_NAME,
-    version = Setting().PROJECT_VERSION,
-    contact = Setting().PROJECT_OWNER
+    title = setting.PROJECT_NAME,
+    version = setting.PROJECT_VERSION,
+    contact = setting.PROJECT_OWNER
   )
   create_table()
   include_router(app)

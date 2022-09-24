@@ -9,7 +9,9 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 from setting import Setting
 
-engine = create_engine(url=Setting().DB_CONNECTION_STR, echo=False) # echo = show-sql
+setting = Setting()
+db_connection_url = f'postgresql://{setting.DB_USER}:{setting.DB_PASSWORD}@{setting.DB_HOST}:{setting.DB_PORT}/{setting.DB_NAME}'
+engine = create_engine(url=db_connection_url, echo=False) # echo = show-sql
 
 # Difference between flush and commit: https://www.youtube.com/watch?v=1atze8xe9wg&ab_channel=HowtoFixYourComputer
 Session = sessionmaker(bind=engine, autoflush=False, autocommit=False)
@@ -38,7 +40,7 @@ def get_number_models() -> int:
    
 async def check_db_info():
   try:
-    db = databases.Database(Setting().DB_CONNECTION_STR)
+    db = databases.Database(db_connection_url)
     if not db.is_connected:
       await db.connect()
       db_version = await db.execute('SELECT version()')
