@@ -1,11 +1,13 @@
 from functools import lru_cache
 
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, Security
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from loguru import logger
 
-from database import (check_db_info, create_db, create_schema, create_tables, truncate_db)
+from database import check_db_info, create_db, create_schema, create_tables
 from routers import user_router
 from setting import Setting, setting
+from utils.token_util import decode_token
 
 
 # https://fastapi.tiangolo.com/es/advanced/settings/
@@ -31,8 +33,10 @@ def start_application():
 
 app = start_application()
 
-@app.get('/info', tags=['Info'], description='Full information of project')
-def get_info_project(setting: Setting = Depends(get_setting)):
+@app.get('/info', tags=['Info'], description='Full information of project', )
+def get_info_project(setting: Setting = Depends(get_setting), credentials: HTTPAuthorizationCredentials = Security(HTTPBearer(), use_cache=False)):
+  token = credentials.credentials
+  decode_token(token)
   return setting.dict()
 
 @app.on_event('startup')
@@ -42,5 +46,6 @@ async def app_startup():
 
 @app.on_event('shutdown')
 def app_shutdown():
-  truncate_db()
+  # truncate_db()
+  pass
   
