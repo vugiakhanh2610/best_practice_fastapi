@@ -3,7 +3,7 @@ from fastapi_utils.cbv import cbv
 from sqlalchemy.orm import Session
 
 from database import get_session
-from schemas.user_schema import UserCreate, UserResponse
+from schemas.user_schema import UserCreate, UserLogin, UserResponse
 from services.user_service import UserService
 
 router = APIRouter(prefix='/api/v1/user', tags=['User'])
@@ -31,3 +31,7 @@ class UserRouter:
   @router.delete('')
   def delete_by_id(self, id: int):
     return UserService.delete_by_id(self.session, id)
+  
+  @router.post('/login')
+  async def login(self, payload: UserLogin):
+    return UserService.login(self.session, payload)
