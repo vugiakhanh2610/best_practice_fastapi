@@ -8,6 +8,7 @@ pre-commit
 psycopg2-binary
 pyclean
 pydantic[email]
+pyjwt
 python-dotenv
 requests
 sqlalchemy
