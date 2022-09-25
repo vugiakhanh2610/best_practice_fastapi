@@ -5,14 +5,13 @@ from loguru import logger
 
 from database import (check_db_info, create_db, create_schema, create_tables, truncate_db)
 from routers import user_router
-from setting import Setting
+from setting import Setting, setting
 
-setting = Setting()
 
 # https://fastapi.tiangolo.com/es/advanced/settings/
 @lru_cache()
 def get_setting():
-  return Setting()
+  return setting
 
 def include_router(app: FastAPI):
   logger.debug('Including Routers')

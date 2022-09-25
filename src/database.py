@@ -9,9 +9,8 @@ from sqlalchemy import MetaData, create_engine, schema
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy_utils.functions import create_database, database_exists
 
-from setting import Setting
+from setting import setting
 
-setting = Setting()
 db_connection_url = f'postgresql://{setting.DB_USER}:{setting.DB_PASSWORD}@{setting.DB_HOST}:{setting.DB_PORT}/{setting.DB_NAME}'
 
 engine = create_engine(url=db_connection_url, echo=False, connect_args={'options': f'-csearch_path={setting.DB_SCHEMA}'}) # echo = show-sql
