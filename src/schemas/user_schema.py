@@ -1,30 +1,24 @@
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr, Field
+from fastapi_users.schemas import BaseUser, BaseUserCreate, BaseUserUpdate
+from pydantic import BaseModel, Field
 
 
-class UserBase(BaseModel):
-  # id: Optional[int] = None
-  username: Optional[str] = None
-  email: Optional[EmailStr] = None
-  password: Optional[str] = None
-  disabled: Optional[bool] = None
+class UserResponse(BaseUser[int]):
+  username: Optional[str] = Field(max_length=50)
   
   # https://pydantic-docs.helpmanual.io/usage/model_config/
-  class Config:
-    anystr_strip_whitespace = True
-    extra = 'forbid'
-    orm_mode = True # https://pydantic-docs.helpmanual.io/usage/models/#orm-mode-aka-arbitrary-class-instances
+  # class Config:
+  #   anystr_strip_whitespace = True
+  #   extra = 'forbid'
+  #   orm_mode = True # https://pydantic-docs.helpmanual.io/usage/models/#orm-mode-aka-arbitrary-class-instances
 
-class UserResponse(BaseModel):
-  username: str
-  email: EmailStr
-  disabled: Optional[bool]
-
-class UserCreate(UserBase):
+class UserCreate(BaseUserCreate):
   username: str = Field(max_length=50)
-  email: EmailStr
-  password: str 
+  
+class UserUpdate(BaseUserUpdate):
+  username: Optional[str] = Field(max_length=50)
+  
 
 class UserLogin(BaseModel):
   email: str

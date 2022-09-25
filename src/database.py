@@ -1,22 +1,30 @@
 import contextlib
 import fnmatch
 import os
-from typing import Generator
+from typing import AsyncGenerator, Generator
 
 import databases
 from loguru import logger
 from sqlalchemy import MetaData, create_engine, schema
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import Session, declarative_base, sessionmaker
 from sqlalchemy_utils.functions import create_database, database_exists
 
 from setting import setting
 
 db_connection_url = f'postgresql://{setting.DB_USER}:{setting.DB_PASSWORD}@{setting.DB_HOST}:{setting.DB_PORT}/{setting.DB_NAME}'
+db_connection_url_async = f'postgresql+asyncpg://{setting.DB_USER}:{setting.DB_PASSWORD}@{setting.DB_HOST}:{setting.DB_PORT}/{setting.DB_NAME}'
 
 engine = create_engine(url=db_connection_url, echo=False, connect_args={'options': f'-csearch_path={setting.DB_SCHEMA}'}) # echo = show-sql
+async_engine = create_async_engine(db_connection_url_async)
 
 # Difference between flush and commit: https://www.youtube.com/watch?v=1atze8xe9wg&ab_channel=HowtoFixYourComputer
 Session = sessionmaker(bind=engine, autoflush=False, autocommit=False)
+async_session_maker = sessionmaker(bind=async_engine, class_=AsyncSession, expire_on_commit=False)
+
+async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
+  async with async_session_maker() as session:
+    yield session
 
 # inherit from this class to create each of the database models 
 Base = declarative_base(metadata=MetaData(schema=f'{setting.DB_SCHEMA}'))
