@@ -53,7 +53,8 @@ current_user = fastapi_users.current_user(verified=True, active=True, superuser=
 def include_auth_router(app: FastAPI):
   app.include_router(
     fastapi_users.get_register_router(UserResponse, UserCreate),
-    prefix='/auth'
+    prefix='/auth',
+    tags=['auth'],
   )
   app.include_router(
     fastapi_users.get_auth_router(auth_backend, True), prefix='/auth/jwt', tags=['auth']
