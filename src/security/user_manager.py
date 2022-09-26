@@ -9,7 +9,7 @@ from loguru import logger
 from database import get_async_session
 from models.user import User
 from schemas.user_schema import UserCreate, UserResponse, UserUpdate
-from setting import setting
+from setting import settings
 from utils.token_util import load_jwk_kty_EC
 
 
@@ -35,7 +35,7 @@ async def get_user_manager(user_db: SQLAlchemyUserDatabase = Depends(get_user_db
 bearer_transport = BearerTransport(tokenUrl='auth/jwt/login')
 
 def get_jwt_strategy() -> JWTStrategy:
-  return JWTStrategy(secret=load_jwk_kty_EC(), lifetime_seconds=100*60, algorithm=setting.JWT_ALGORITHM, public_key=load_jwk_kty_EC().public_key())
+  return JWTStrategy(secret=load_jwk_kty_EC(), lifetime_seconds=100*60, algorithm=settings.JWT_ALGORITHM, public_key=load_jwk_kty_EC().public_key())
 
 auth_backend = AuthenticationBackend(
   name='JWT Authentication with Bearer format',

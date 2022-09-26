@@ -7,13 +7,13 @@ from database import check_db_info, create_db, create_schema, create_tables
 from models.user import User
 from routers import user_router
 from security.user_manager import current_user, include_auth_router
-from setting import Setting, setting
+from setting import Settings, settings
 
 
 # https://fastapi.tiangolo.com/es/advanced/settings/
 @lru_cache()
-def get_setting():
-  return setting
+def get_settings():
+  return settings
 
 def include_router(app: FastAPI):
   logger.debug('Including Routers')
@@ -22,9 +22,9 @@ def include_router(app: FastAPI):
   
 def start_application():
   app = FastAPI(
-    title = setting.PROJECT_NAME,
-    version = setting.PROJECT_VERSION,
-    contact = setting.PROJECT_OWNER
+    title = settings.PROJECT_NAME,
+    version = settings.PROJECT_VERSION,
+    contact = settings.PROJECT_OWNER
   )
   create_db()
   create_schema()
@@ -35,14 +35,14 @@ def start_application():
 app = start_application()
 
 @app.get('/info', tags=['Info'], description='Full information of project', )
-def get_info_project(setting: Setting = Depends(get_setting), user: User = Depends(current_user)):
-  return setting.dict()
+def get_info_project(settings: Settings = Depends(get_settings), user: User = Depends(current_user)):
+  return settings.dict()
 
 # @app.get('/info', tags=['Info'], description='Full information of project', )
-# def get_info_project(setting: Setting = Depends(get_setting), credentials: HTTPAuthorizationCredentials = Security(HTTPBearer(), use_cache=False)):
+# def get_info_project(settings: Settings = Depends(get_settings), credentials: HTTPAuthorizationCredentials = Security(HTTPBearer(), use_cache=False)):
 #   token = credentials.credentials
 #   decode_token(token)
-#   return setting.dict()
+#   return settings.dict()
 
 @app.on_event('startup')
 async def app_startup():

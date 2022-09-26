@@ -1,7 +1,7 @@
 from pydantic import BaseSettings
 
 
-class Setting(BaseSettings):
+class Settings(BaseSettings):
   PROJECT_NAME: str
   PROJECT_VERSION: str
   PROJECT_OWNER: dict[str, str]
@@ -23,5 +23,5 @@ class Setting(BaseSettings):
     env_file = '.env'
     case_sensitive = True
 
-setting = Setting()
+settings = Settings()
     

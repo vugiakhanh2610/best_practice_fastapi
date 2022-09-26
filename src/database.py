@@ -10,12 +10,12 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 from sqlalchemy_utils.functions import create_database, database_exists
 
-from setting import setting
+from setting import settings
 
-db_connection_url = f'postgresql://{setting.DB_USER}:{setting.DB_PASSWORD}@{setting.DB_HOST}:{setting.DB_PORT}/{setting.DB_NAME}'
-db_connection_url_async = f'postgresql+asyncpg://{setting.DB_USER}:{setting.DB_PASSWORD}@{setting.DB_HOST}:{setting.DB_PORT}/{setting.DB_NAME}'
+db_connection_url = f'postgresql://{settings.DB_USER}:{settings.DB_PASSWORD}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}'
+db_connection_url_async = f'postgresql+asyncpg://{settings.DB_USER}:{settings.DB_PASSWORD}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}'
 
-engine = create_engine(url=db_connection_url, echo=False, connect_args={'options': f'-csearch_path={setting.DB_SCHEMA}'}) # echo = show-sql
+engine = create_engine(url=db_connection_url, echo=False, connect_args={'options': f'-csearch_path={settings.DB_SCHEMA}'}) # echo = show-sql
 async_engine = create_async_engine(db_connection_url_async)
 
 # Difference between flush and commit: https://www.youtube.com/watch?v=1atze8xe9wg&ab_channel=HowtoFixYourComputer
@@ -27,7 +27,7 @@ async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
     yield session
 
 # inherit from this class to create each of the database models 
-Base = declarative_base(metadata=MetaData(schema=f'{setting.DB_SCHEMA}'))
+Base = declarative_base(metadata=MetaData(schema=f'{settings.DB_SCHEMA}'))
 # class Base:
 #   id: Any
 #   __name__: str
@@ -43,8 +43,8 @@ def create_db():
 
 def create_schema():
   logger.debug('Creating Schema')
-  if not engine.dialect.has_schema(engine, f'{setting.DB_SCHEMA}'):
-    engine.execute(schema.CreateSchema(f'{setting.DB_SCHEMA}'))
+  if not engine.dialect.has_schema(engine, f'{settings.DB_SCHEMA}'):
+    engine.execute(schema.CreateSchema(f'{settings.DB_SCHEMA}'))
 
 def create_tables():
   logger.debug('Creating Tables')
@@ -83,7 +83,7 @@ async def check_db_info():
     if not db.is_connected:
       await db.connect()
       db_version = await db.execute('SELECT version()')
-      number_tables = await db.execute(f"SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '{setting.DB_SCHEMA}'")
+      number_tables = await db.execute(f"SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '{settings.DB_SCHEMA}'")
       number_models = get_number_models()
       
       logger.info(db_version)
