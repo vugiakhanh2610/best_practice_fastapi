@@ -1,9 +1,9 @@
 from functools import lru_cache
 
+from authentication.user_manager import current_user, include_auth_router
 from fastapi import Depends, FastAPI
 from loguru import logger
 
-from authentication.user_manager import current_user, include_auth_router
 from database import check_db_info, create_db, create_schema, create_tables
 from models.user import User
 from routers import user_router
@@ -37,6 +37,12 @@ app = start_application()
 @app.get('/info', tags=['Info'], description='Full information of project', )
 def get_info_project(setting: Setting = Depends(get_setting), user: User = Depends(current_user)):
   return setting.dict()
+
+# @app.get('/info', tags=['Info'], description='Full information of project', )
+# def get_info_project(setting: Setting = Depends(get_setting), credentials: HTTPAuthorizationCredentials = Security(HTTPBearer(), use_cache=False)):
+#   token = credentials.credentials
+#   decode_token(token)
+#   return setting.dict()
 
 @app.on_event('startup')
 async def app_startup():
