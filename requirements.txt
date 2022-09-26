@@ -1,6 +1,8 @@
 asyncpg
+cryptography
 databases
 fastapi
+fastapi-users[sqlalchemy]
 fastapi_utils
 loguru
 passlib[bcrypt] 
@@ -8,6 +10,7 @@ pre-commit
 psycopg2-binary
 pyclean
 pydantic[email]
+pyjwt
 python-dotenv
 requests
 sqlalchemy

@@ -3,7 +3,9 @@ from functools import lru_cache
 from fastapi import Depends, FastAPI
 from loguru import logger
 
-from database import (check_db_info, create_db, create_schema, create_tables, truncate_db)
+from authentication.user_manager import current_user, include_auth_router
+from database import check_db_info, create_db, create_schema, create_tables
+from models.user import User
 from routers import user_router
 from setting import Setting, setting
 
@@ -16,6 +18,7 @@ def get_setting():
 def include_router(app: FastAPI):
   logger.debug('Including Routers')
   app.include_router(user_router.router)
+  include_auth_router(app)
   
 def start_application():
   app = FastAPI(
@@ -31,8 +34,8 @@ def start_application():
 
 app = start_application()
 
-@app.get('/info', tags=['Info'], description='Full information of project')
-def get_info_project(setting: Setting = Depends(get_setting)):
+@app.get('/info', tags=['Info'], description='Full information of project', )
+def get_info_project(setting: Setting = Depends(get_setting), user: User = Depends(current_user)):
   return setting.dict()
 
 @app.on_event('startup')
@@ -42,5 +45,7 @@ async def app_startup():
 
 @app.on_event('shutdown')
 def app_shutdown():
-  truncate_db()
+  # truncate_db()
+  pass
+
   

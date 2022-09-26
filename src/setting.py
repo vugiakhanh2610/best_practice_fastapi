@@ -13,6 +13,12 @@ class Setting(BaseSettings):
   DB_NAME: str
   DB_SCHEMA: str
   
+  JWT_SECRET_KEY: str
+  JWT_ALGORITHM: str
+  ES256_KEY: str
+  ES256_KID: str
+  
+  
   class Config:
     env_file = '.env'
     case_sensitive = True
