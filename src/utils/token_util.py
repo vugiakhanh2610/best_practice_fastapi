@@ -18,7 +18,7 @@ def load_jwk_kty_EC():
   
 def generate_token(email):
   payload = {
-    'iss': 'http://localhost:10001',
+    'iss': settings.BASE_SERVER_URL,
     'iat': datetime.utcnow(),
     'exp': datetime.utcnow() + timedelta(minutes=settings.TOKEN_EXPIRY_IN_MINUTES),
     'sub': email,
