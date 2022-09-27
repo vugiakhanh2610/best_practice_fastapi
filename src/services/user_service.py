@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from models.user import User
 from schemas.user_schema import UserCreate, UserResponse
-from utils.hashing_util import Hasher
+from utils.hashing_util import hash_obj
 
 
 class UserService: 
@@ -20,7 +20,7 @@ class UserService:
   
   def create(session: Session, payload: UserCreate) -> int:
     user = User(**payload.dict())
-    user.password = Hasher.hash_obj(user.password)
+    user.password = hash_obj(user.password)
     session.add(user)
     session.commit()
     session.refresh(user)
@@ -46,7 +46,7 @@ class UserService:
   #   user: User = session.query(User).filter(User.email == payload.email).first()
   #   if not user:
   #     raise HTTPException(status_code=404, detail='User not exist')
-  #   if not Hasher.verify_hashed_str(payload.password, user.password):
+  #   if not verify_hashed_str(payload.password, user.password):
   #     raise HTTPException(status_code=401, detail='Invalid password')
     
   #   access_token = generate_token(user.email)
