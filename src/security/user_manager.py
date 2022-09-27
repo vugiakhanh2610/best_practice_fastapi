@@ -7,14 +7,15 @@ from loguru import logger
 
 from database import get_async_session
 from models.user import User
+from setting import settings
 
 
 async def get_user_db(session = Depends(get_async_session)):
   yield SQLAlchemyUserDatabase(session, User)
 
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
-  reset_password_token_secret = 'SECRET'
-  verification_token_secret = 'SECRET'
+  reset_password_token_secret = settings.JWT_SECRET_KEY
+  verification_token_secret = settings.JWT_SECRET_KEY
   
   async def on_after_register(self, user: User, request: Optional[Request] = None):
     logger.info(f'User {user.email} has registered.')
