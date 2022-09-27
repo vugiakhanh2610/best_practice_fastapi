@@ -6,7 +6,7 @@ from loguru import logger
 from database import check_db_info, create_db, create_schema, create_tables
 from models.user import User
 from routers import user_router
-from security.user_manager import current_user, include_auth_router
+from security.secure import current_user, include_auth_router
 from setting import Settings, settings
 
 
