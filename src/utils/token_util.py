@@ -20,7 +20,7 @@ def generate_token(email):
   payload = {
     'iss': 'http://localhost:10001',
     'iat': datetime.utcnow(),
-    'exp': datetime.utcnow() + timedelta(minutes=10),
+    'exp': datetime.utcnow() + timedelta(minutes=settings.TOKEN_EXPIRY_IN_MINUTES),
     'sub': email,
     'scope': 'access_token'
   }

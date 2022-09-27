@@ -17,7 +17,7 @@ class Settings(BaseSettings):
   JWT_ALGORITHM: str
   ES256_KEY: str
   ES256_KID: str
-  
+  TOKEN_EXPIRY_IN_MINUTES: int
   
   class Config:
     env_file = '.env'

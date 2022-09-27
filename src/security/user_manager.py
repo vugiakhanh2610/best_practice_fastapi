@@ -17,6 +17,8 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
   reset_password_token_secret = settings.JWT_SECRET_KEY
   verification_token_secret = settings.JWT_SECRET_KEY
   
+  reset_password_token_lifetime_seconds = settings.TOKEN_EXPIRY_IN_MINUTES
+  verification_token_lifetime_seconds = settings.TOKEN_EXPIRY_IN_MINUTES
   async def on_after_register(self, user: User, request: Optional[Request] = None):
     logger.info(f'User {user.email} has registered.')
     
