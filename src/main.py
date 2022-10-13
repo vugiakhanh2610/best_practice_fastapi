@@ -1,5 +1,3 @@
-from functools import lru_cache
-
 from fastapi import Depends, FastAPI
 from loguru import logger
 
@@ -7,13 +5,8 @@ from database import check_db_info, create_db, create_schema, create_tables
 from models.user import User
 from routers import user_router
 from security.secure import current_user, include_auth_router
-from setting import Settings, settings
+from setting import settings
 
-
-# https://fastapi.tiangolo.com/es/advanced/settings/
-@lru_cache()
-def get_settings():
-  return settings
 
 def include_router(app: FastAPI):
   logger.debug('Including Routers')
@@ -35,7 +28,7 @@ def start_application():
 app = start_application()
 
 @app.get('/info', tags=['Info'], description='Full information of project', )
-def get_info_project(settings: Settings = Depends(get_settings), user: User = Depends(current_user)):
+def get_info_project(user: User = Depends(current_user)):
   return settings.dict()
 
 # @app.get('/info', tags=['Info'], description='Full information of project', )

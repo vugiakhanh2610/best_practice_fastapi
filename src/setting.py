@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 from pydantic import AnyHttpUrl, BaseSettings
 
 
@@ -23,6 +25,11 @@ class Settings(BaseSettings):
   class Config:
     env_file = '.env'
     case_sensitive = True
+    
+# Reading the env file is costly, especially when read for each request. So cache the values using lru_cache.
+@lru_cache()
+def get_settings() -> Settings:
+  return Settings()
 
-settings = Settings()
+settings = get_settings()
     
