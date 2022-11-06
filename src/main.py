@@ -3,14 +3,12 @@ from loguru import logger
 
 from database import check_db_info, create_db, create_schema, create_tables
 from models.user import User
-from routers import user_router
 from security.secure import current_user, include_auth_router
 from setting import settings
 
 
 def include_router(app: FastAPI):
   logger.debug('Including Routers')
-  app.include_router(user_router.router)
   include_auth_router(app)
   
 def start_application():
