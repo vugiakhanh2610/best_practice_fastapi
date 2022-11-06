@@ -1,7 +1,8 @@
+import uuid
 from typing import Optional
 
 from fastapi import Depends, Request
-from fastapi_users import BaseUserManager, IntegerIDMixin
+from fastapi_users import BaseUserManager, UUIDIDMixin
 from fastapi_users.db import SQLAlchemyUserDatabase
 from loguru import logger
 
@@ -13,12 +14,12 @@ from setting import settings
 async def get_user_db(session = Depends(get_async_session)):
   yield SQLAlchemyUserDatabase(session, User)
 
-class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
+class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
   reset_password_token_secret = settings.JWT_SECRET_KEY
   verification_token_secret = settings.JWT_SECRET_KEY
   
-  reset_password_token_lifetime_seconds = settings.TOKEN_EXPIRY_IN_MINUTES
-  verification_token_lifetime_seconds = settings.TOKEN_EXPIRY_IN_MINUTES
+  reset_password_token_lifetime_seconds = settings.TOKEN_EXPIRY_IN_MINUTES * 60
+  verification_token_lifetime_seconds = settings.TOKEN_EXPIRY_IN_MINUTES * 60
   async def on_after_register(self, user: User, request: Optional[Request] = None):
     logger.info(f'User {user.email} has registered.')
     

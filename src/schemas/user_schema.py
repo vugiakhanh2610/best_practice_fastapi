@@ -1,10 +1,11 @@
+import uuid
 from typing import Optional
 
 from fastapi_users.schemas import BaseUser, BaseUserCreate, BaseUserUpdate
-from pydantic import BaseModel, Field
+from pydantic import Field
 
 
-class UserResponse(BaseUser[int]):
+class UserResponse(BaseUser[uuid.UUID]):
   username: Optional[str] = Field(max_length=50)
   
   # https://pydantic-docs.helpmanual.io/usage/model_config/
@@ -18,9 +19,5 @@ class UserCreate(BaseUserCreate):
   
 class UserUpdate(BaseUserUpdate):
   username: Optional[str] = Field(max_length=50)
-  
 
-class UserLogin(BaseModel):
-  email: str
-  password: str
   
