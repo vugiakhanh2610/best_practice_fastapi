@@ -1,13 +1,14 @@
 import contextlib
 import fnmatch
 import os
+import warnings
 from typing import Generator
 
 import databases
 from fastapi import HTTPException
 from loguru import logger
 from sqlalchemy import MetaData, create_engine, schema
-from sqlalchemy.exc import NoResultFound
+from sqlalchemy.exc import NoResultFound, SAWarning
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 from sqlalchemy_utils.functions import create_database, database_exists
 
@@ -62,10 +63,13 @@ def truncate_db():
 # create a database session for each request - close it after finishing the request
 def get_session() -> Generator:
   try:
-    session = Session()
-    yield session
+    with warnings.catch_warnings():
+      warnings.simplefilter('ignore', category=SAWarning)
+      session = Session()
+      yield session
   except NoResultFound as e:
     raise HTTPException(status_code=404, detail=e._message())
+    
   finally:
     session.close()
 

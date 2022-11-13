@@ -1,6 +1,6 @@
 from functools import lru_cache
 
-from pydantic import AnyHttpUrl, BaseSettings
+from pydantic import AnyHttpUrl, BaseSettings, EmailStr
 
 
 class Settings(BaseSettings):
@@ -21,6 +21,11 @@ class Settings(BaseSettings):
   ES256_KEY: str
   ES256_KID: str
   TOKEN_EXPIRY_IN_MINUTES: int
+  
+  SENDGRID_EMAIL_FROM: EmailStr
+  SENDGRID_NAME_FROM: str
+  SENDGRID_HOST: str
+  SENDGRID_API_KEY: str
   
   class Config:
     env_file = '.env'

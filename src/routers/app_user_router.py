@@ -4,8 +4,9 @@ from fastapi import APIRouter, Depends
 from fastapi_utils.cbv import cbv
 from sqlalchemy.orm import Session
 
+from api_response import APIResponseSuccess
 from database import get_session
-from schemas.app_user_schema import AppUserCreate, AppUserUpdate
+from schemas.app_user_schema import AppUserCreate, AppUserPassword, AppUserUpdate
 from services.app_user_service import app_user_service
 from services.role_service import role_service
 
@@ -19,19 +20,21 @@ class AppUserRouter:
   
   @router.post(RESOURCE)
   def create(self, payload: AppUserCreate):
-    app_user_service.create(self.session, payload)
-    self.session.commit()
-    return {'message': 'SUCCESS'}
+    app_user = app_user_service.create(self.session, payload)
+    return APIResponseSuccess(data=app_user, message='Please verify your email')
   
   @router.get(RESOURCE + '/{id}')
   def get_by_id(self, id: uuid.UUID):
-    return app_user_service.get_by_id(self.session, id)
+    data = app_user_service.get_by_id(self.session, id)
+    return APIResponseSuccess(data=data)
   
-  def convert_to_CamelCase(self, word):
-    return ''.join(x.capitalize() or '_' for x in word.split('_'))
+  @router.put(RESOURCE +'/reset_password/{verify_token}')
+  def reset_password(self, verify_token: str, payload: AppUserPassword):
+    app_user_service.reset_password(self.session, verify_token, payload)
+    return APIResponseSuccess()
     
   @router.put(RESOURCE + '/add_role/{id}')
-  def add_role(self, id: uuid.UUID, payload: AppUserUpdate):
+  def update(self, id: uuid.UUID, payload: AppUserUpdate):
     app_user = app_user_service.get_by_id(self.session, id)
     roles_before_update: list = app_user.roles.copy()
     
