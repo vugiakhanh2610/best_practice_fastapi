@@ -1,8 +1,6 @@
-asyncpg
 cryptography
 databases
 fastapi
-fastapi-users[sqlalchemy]
 fastapi_utils
 loguru
 passlib[bcrypt] 
