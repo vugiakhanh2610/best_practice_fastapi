@@ -2,11 +2,13 @@ from fastapi import FastAPI
 from loguru import logger
 
 from database import create_db, create_schema, create_tables
+from routers.endpoints import create_endpoints
 from setting import settings
 
 
 def include_router(app: FastAPI):
   logger.debug('Including Routers')
+  create_endpoints(app)
   
 def start_application():
   app = FastAPI(

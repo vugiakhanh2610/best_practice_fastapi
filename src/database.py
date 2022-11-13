@@ -1,30 +1,24 @@
 import contextlib
 import fnmatch
 import os
-from typing import AsyncGenerator, Generator
+from typing import Generator
 
 import databases
+from fastapi import HTTPException
 from loguru import logger
 from sqlalchemy import MetaData, create_engine, schema
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 from sqlalchemy_utils.functions import create_database, database_exists
 
 from setting import settings
 
 db_connection_url = f'postgresql://{settings.DB_USER}:{settings.DB_PASSWORD}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}'
-db_connection_url_async = f'postgresql+asyncpg://{settings.DB_USER}:{settings.DB_PASSWORD}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}'
 
 engine = create_engine(url=db_connection_url, echo=False, connect_args={'options': f'-csearch_path={settings.DB_SCHEMA}'}) # echo = show-sql
-async_engine = create_async_engine(db_connection_url_async)
 
 # Difference between flush and commit: https://www.youtube.com/watch?v=1atze8xe9wg&ab_channel=HowtoFixYourComputer
 Session = sessionmaker(bind=engine, autoflush=False, autocommit=False)
-async_session_maker = sessionmaker(bind=async_engine, class_=AsyncSession, expire_on_commit=False)
-
-async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
-  async with async_session_maker() as session:
-    yield session
 
 # inherit from this class to create each of the database models 
 Base = declarative_base(metadata=MetaData(schema=f'{settings.DB_SCHEMA}'))
@@ -70,6 +64,8 @@ def get_session() -> Generator:
   try:
     session = Session()
     yield session
+  except NoResultFound as e:
+    raise HTTPException(status_code=404, detail=e._message())
   finally:
     session.close()
 

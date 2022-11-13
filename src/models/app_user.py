@@ -12,4 +12,4 @@ class AppUser(Base):
   username = Column(String(255), nullable=False)
   email = Column(String(255), nullable=False)
   password = Column(String(255), nullable=False)
-  roles = relationship('Role', secondary=app_user_role, back_populates='app_user')
+  roles = relationship('Role', secondary=app_user_role)

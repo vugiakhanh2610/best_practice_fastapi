@@ -2,8 +2,7 @@ import os
 import sys
 
 sys.path.append(f'{os.getcwd()}/src')
-from database import Base, engine
+from main import drop_tables
 
-
-def drop_tables():
-  Base.metadata.drop_all(bind=engine, checkfirst=True)
+if __name__ == '__main__':
+  drop_tables()
