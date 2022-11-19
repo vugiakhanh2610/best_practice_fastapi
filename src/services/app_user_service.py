@@ -2,6 +2,7 @@ import secrets
 import uuid
 
 from fastapi import HTTPException
+from fastapi.encoders import jsonable_encoder
 from pydantic import EmailStr
 from sqlalchemy.orm import Session, eagerload
 
@@ -92,6 +93,6 @@ class AppUserService(CRUDBaseService[AppUserCreate, AppUserUpdate, AppUserRespon
     return super().get_list(query, params)
   
   def get_by_id_with_role(self, session: Session, id: uuid.UUID):
-    return session.query(AppUser).options(eagerload(AppUser.roles)).filter(AppUser.id == id).one()
+    return jsonable_encoder(session.query(AppUser).options(eagerload(AppUser.roles)).filter(AppUser.id == id).one())
   
 app_user_service = AppUserService(AppUser)

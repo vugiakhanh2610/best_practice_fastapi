@@ -30,7 +30,7 @@ class CRUDBaseService(Generic[SchemaCreateType, SchemaUpdateType, SchemaResponse
     return
 
   def get_by_id(self, session: Session, id: uuid.UUID) -> ModelType:
-    return session.query(self.Model).filter(self.Model.id == id).one()
+    return jsonable_encoder(session.query(self.Model).filter(self.Model.id == id).one())
 
   def update_by_id(self, session: Session, id: uuid.UUID, payload: SchemaUpdateType):
     model = self.get_by_id(session, id)
@@ -66,6 +66,7 @@ class CRUDBaseService(Generic[SchemaCreateType, SchemaUpdateType, SchemaResponse
       items = query.order_by(criterion).limit(params.page_size).offset(params.page_index * params.page_size).all()
     except:
       raise HTTPException(status_code=501, detail=f'Unable to sort by column {params.sort_by}')
+    
     return {
       'items': jsonable_encoder(items), 
       'total_items': total_items,

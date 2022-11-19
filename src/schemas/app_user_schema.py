@@ -1,14 +1,14 @@
 import uuid
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 from schemas.role_schema import RoleResponse
 
 
 class AppUserCreate(BaseModel):
   username: str
-  email: str
+  email: EmailStr
   roles: list[uuid.UUID]
   
 class AppUserUpdate(BaseModel):
@@ -18,7 +18,11 @@ class AppUserUpdate(BaseModel):
 class AppUserPassword(BaseModel):
   password: str
 
-class AppUserResponse(BaseModel):
+class AppUserResponse(AppUserCreate):
+  id: uuid.UUID
+  roles: list[RoleResponse]
+
+class AppUserResponsePage(BaseModel):
+  id: uuid.UUID
+  email: EmailStr
   username: str
-  email: str
-  roles: RoleResponse

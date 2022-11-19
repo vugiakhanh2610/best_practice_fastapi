@@ -1,11 +1,9 @@
 from http import HTTPStatus
 
 from fastapi import FastAPI, HTTPException
-from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from loguru import logger
 
-from api_response import APIResponseError
 from database import create_db, create_schema, create_tables
 from routers.endpoints import create_endpoints
 from setting import settings
@@ -33,12 +31,11 @@ app = start_application()
 def http_exception_handler(request, exception: HTTPException):
   return JSONResponse(
     status_code = exception.status_code,
-    content = jsonable_encoder(
-      APIResponseError(
-        message = HTTPStatus(exception.status_code).phrase,
-        error_details = exception.detail
-      )
-    )
+    content = {
+      'message': HTTPStatus(exception.status_code).phrase,
+      'error_details': exception.detail,
+      'data': None
+    }
   ) 
 
 # @app.get('/info', tags=['Info'], description='Full information of project', )
