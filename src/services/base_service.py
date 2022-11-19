@@ -26,3 +26,13 @@ class CRUDBaseService(Generic[SchemaCreateType, SchemaUpdateType, SchemaResponse
 
   def get_by_id(self, session: Session, id: uuid.UUID) -> ModelType:
     return session.query(self.Model).filter(self.Model.id == id).one()
+
+  def update_by_id(self, session: Session, id: uuid.UUID, payload: SchemaUpdateType):
+    model = self.get_by_id(session, id)
+    set_value(model, payload)
+    return 
+
+  def delete_by_id(self, session: Session, id: uuid.UUID):
+    model = self.get_by_id(session, id)
+    session.delete(model)
+    return
