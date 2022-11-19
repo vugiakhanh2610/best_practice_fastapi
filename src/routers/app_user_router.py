@@ -27,7 +27,7 @@ class AppUserRouter:
   
   @router.get(RESOURCE + '/{id}')
   def get_by_id(self, id: uuid.UUID):
-    data = app_user_service.get_by_id(self.session, id)
+    data = app_user_service.get_by_id_with_role(self.session, id)
     return APIResponseSuccess(data=data)
   
   @router.put(RESOURCE +'/password/{verify_token}')

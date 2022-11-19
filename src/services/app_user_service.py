@@ -3,7 +3,7 @@ import uuid
 
 from fastapi import HTTPException
 from pydantic import EmailStr
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, eagerload
 
 from enums.sendgrid_enum import TemplateId
 from models.app_user import AppUser
@@ -70,7 +70,7 @@ class AppUserService(CRUDBaseService[AppUserCreate, AppUserUpdate, AppUserRespon
       else:
         roles_before_update.remove(role)
     for r in roles_before_update:
-      session.delete(r)
+      app_user.roles.remove(r)
     return
   
   def get_query(self, session: Session, keyword: str = None):
@@ -90,5 +90,8 @@ class AppUserService(CRUDBaseService[AppUserCreate, AppUserUpdate, AppUserRespon
     params,
   ):
     return super().get_list(query, params)
+  
+  def get_by_id_with_role(self, session: Session, id: uuid.UUID):
+    return session.query(AppUser).options(eagerload(AppUser.roles)).filter(AppUser.id == id).one()
   
 app_user_service = AppUserService(AppUser)

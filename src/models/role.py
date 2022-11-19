@@ -10,4 +10,4 @@ class Role(Base):
   __tablename__ = 'role'
   id = Column(GUID, server_default=GUID_SERVER_DEFAULT_POSTGRESQL, primary_key=True)
   name = Column(String(255))
-  users = relationship('AppUser', secondary=app_user_role)
+  app_users = relationship('AppUser', secondary=app_user_role, back_populates='roles')

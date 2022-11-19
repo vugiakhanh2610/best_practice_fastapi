@@ -14,4 +14,4 @@ class AppUser(Base):
   password = Column(String(255))
   is_verified = Column(Boolean, nullable=False)
   verify_token = Column(String, unique=True)
-  roles = relationship('Role', secondary=app_user_role)
+  roles = relationship('Role', secondary=app_user_role, back_populates='app_users')
