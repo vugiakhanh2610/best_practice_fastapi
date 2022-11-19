@@ -73,4 +73,22 @@ class AppUserService(CRUDBaseService[AppUserCreate, AppUserUpdate, AppUserRespon
       session.delete(r)
     return
   
+  def get_query(self, session: Session, keyword: str = None):
+    condition = []
+    # Search
+    if keyword:
+      condition.append(
+        AppUser.email.ilike(f'%{keyword}%')
+        | AppUser.username.ilike(f'%{keyword}%')
+      )
+    
+    return super().get_query(session, condition)
+  
+  def get_list(
+    self,
+    query,
+    params,
+  ):
+    return super().get_list(query, params)
+  
 app_user_service = AppUserService(AppUser)

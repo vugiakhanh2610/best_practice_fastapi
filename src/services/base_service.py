@@ -1,10 +1,15 @@
 import uuid
+from math import ceil
 from typing import Generic, TypeVar
 
+from fastapi import HTTPException
+from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
-from sqlalchemy.orm import Session
+from sqlalchemy import asc, desc, func
+from sqlalchemy.orm import Query, Session
 
 from database import Base
+from schemas.listing_schema import ListingParams
 from utils.helper_utils import set_value
 
 SchemaCreateType = TypeVar('SchemaCreateType', bound=BaseModel)
@@ -36,3 +41,33 @@ class CRUDBaseService(Generic[SchemaCreateType, SchemaUpdateType, SchemaResponse
     model = self.get_by_id(session, id)
     session.delete(model)
     return
+  
+  def get_query(self, session: Session, condition: list):
+    query = session.query(self.Model).filter(*condition)
+    return query
+  
+  def get_list(
+    self,
+    query: Query,
+    params: ListingParams
+  ):
+    total_items: int = query.distinct().count()
+    total_pages: int = ceil(total_items / params.page_size)
+    
+    direction = asc if params.order == 'asc' else desc
+    # Cannot sort case insensitive with datetime, uuid, integer,...
+    list_case_sensitive = ['DATETIME', 'DATE', 'CHAR(32)', 'INTEGER']
+    try: 
+      column = getattr(self.Model, params.sort_by)
+      if str(column.type) in list_case_sensitive:
+        criterion = direction(column)
+      else:
+        criterion = direction(func.lower(column))
+      items = query.order_by(criterion).limit(params.page_size).offset(params.page_index * params.page_size).all()
+    except:
+      raise HTTPException(status_code=501, detail=f'Unable to sort by column {params.sort_by}')
+    return {
+      'items': jsonable_encoder(items), 
+      'total_items': total_items,
+      'total_pages': total_pages
+    }

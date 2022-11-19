@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from api_response import APIResponseSuccess
 from database import get_session
 from schemas.app_user_schema import AppUserCreate, AppUserPassword, AppUserUpdate
+from schemas.listing_schema import ListingParams
 from services.app_user_service import app_user_service
 
 router = APIRouter(tags=['app_users'])
@@ -45,3 +46,9 @@ class AppUserRouter:
     app_user_service.delete_by_id(self.session, id)
     self.session.commit()
     return APIResponseSuccess()
+
+  @router.get(RESOURCE)
+  def get_list(self, params: ListingParams = Depends(), keyword: str = None):
+    query = app_user_service.get_query(self.session, keyword)
+    data = app_user_service.get_list(query, params)
+    return APIResponseSuccess(data=data)
