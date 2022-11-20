@@ -12,7 +12,7 @@ from schemas.app_user_schema import AppUserCreate, AppUserPassword, AppUserRespo
 from services.base_service import CRUDBaseService
 from services.role_service import role_service
 from services.sendgrid_service import get_payload, send_email
-from utils.hashing_util import hash_obj
+from utils.hashing_util import get_hashed_obj
 from utils.helper_utils import set_value
 
 
@@ -55,7 +55,7 @@ class AppUserService(CRUDBaseService[AppUserCreate, AppUserUpdate, AppUserRespon
   def update_password(self, session: Session, verify_token: str, payload: AppUserPassword):
     app_user = self.get_by_verify_token(session, verify_token)
     app_user.verify_token = None
-    hashed_password = hash_obj(payload.password)
+    hashed_password = get_hashed_obj(payload.password)
     app_user.password = hashed_password
     session.commit()
     return
