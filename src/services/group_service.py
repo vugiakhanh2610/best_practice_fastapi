@@ -21,7 +21,7 @@ class GroupService(CRUDBaseService[GroupCreate, GroupUpdate]):
 
     return group
   
-  def get_by_id(self, session: Session, id: uuid.UUID) -> Group:
+  def get_by_id_with_module_permission(self, session: Session, id: uuid.UUID) -> Group:
     return session.query(Group).options(joinedload(Group.module_permissions).joinedload(ModulePermission.module)).filter(Group.id == id).one()
   
   def update_by_id(self, session: Session, id: uuid.UUID, payload: GroupUpdate):
