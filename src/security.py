@@ -1,7 +1,7 @@
 from functools import wraps
 from http import HTTPStatus
 
-from fastapi import Depends, status
+from fastapi import Depends, Request, status
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
@@ -22,6 +22,9 @@ def auth_check(required_roles):
   def decorator_auth(func):
     @wraps(func)
     def wrapper_auth(*args, **kwargs):
+      request: Request = kwargs['request']
+      http_method = request.method
+      print(http_method)
       current_user = kwargs['current_user']
       roles = current_user.roles
       for role in roles:

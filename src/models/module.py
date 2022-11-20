@@ -3,11 +3,11 @@ from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 
 from database import Base
-from models.app_user_role import app_user_role
+from models.module_permission import ModulePermission
 
 
-class Role(Base):
-  __tablename__ = 'role'
+class Module(Base):
+  __tablename__ = 'module'
   id = Column(GUID, server_default=GUID_SERVER_DEFAULT_POSTGRESQL, primary_key=True)
   name = Column(String(255))
-  app_users = relationship('AppUser', secondary=app_user_role, back_populates='roles')
+  groups = relationship('Group', secondary=ModulePermission, back_populates='modules')

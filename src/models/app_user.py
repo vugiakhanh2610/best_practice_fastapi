@@ -1,9 +1,8 @@
 from fastapi_utils.guid_type import GUID, GUID_SERVER_DEFAULT_POSTGRESQL
-from sqlalchemy import Boolean, Column, String
+from sqlalchemy import Boolean, Column, ForeignKey, String
 from sqlalchemy.orm import relationship
 
 from database import Base
-from models.app_user_role import app_user_role
 
 
 class AppUser(Base):
@@ -14,4 +13,5 @@ class AppUser(Base):
   password = Column(String(255))
   is_verified = Column(Boolean, nullable=False)
   verify_token = Column(String, unique=True)
-  roles = relationship('Role', secondary=app_user_role, back_populates='app_users')
+  group_id = Column(GUID, ForeignKey('group.id', ondelete='SET NULL'))
+  group = relationship('Group', back_populates='app_users')

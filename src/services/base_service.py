@@ -14,11 +14,10 @@ from utils.helper_utils import set_value
 
 SchemaCreateType = TypeVar('SchemaCreateType', bound=BaseModel)
 SchemaUpdateType = TypeVar('SchemaUpdateType', bound=BaseModel)
-SchemaResponseType = TypeVar('SchemaResponseType', bound=BaseModel)
 ModelType = TypeVar('ModelType', bound=Base)
 
 
-class CRUDBaseService(Generic[SchemaCreateType, SchemaUpdateType, SchemaResponseType]):
+class CRUDBaseService(Generic[SchemaCreateType, SchemaUpdateType, ModelType]):
   
   def __init__(self, Model: ModelType) -> None:
     self.Model = Model
