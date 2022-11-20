@@ -69,8 +69,8 @@ def get_session() -> Generator:
       yield session
   except NoResultFound as e:
     raise HTTPException(status_code=404, detail=e._message())
-    
   finally:
+    logger.debug('Closing sesssion')
     session.close()
 
 def get_number_models() -> int:

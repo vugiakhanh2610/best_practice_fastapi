@@ -18,9 +18,9 @@ class Settings(BaseSettings):
   
   JWT_SECRET_KEY: str
   JWT_ALGORITHM: str
-  ES256_KEY: str
-  ES256_KID: str
-  TOKEN_EXPIRY_IN_MINUTES: int
+  # ES256_KEY: str
+  # ES256_KID: str
+  ACCESS_TOKEN_EXPIRY_MINUTES: int
   
   SENDGRID_EMAIL_FROM: EmailStr
   SENDGRID_NAME_FROM: str

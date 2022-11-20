@@ -54,6 +54,7 @@ class AppUserService(CRUDBaseService[AppUserCreate, AppUserUpdate, AppUserRespon
 
   def update_password(self, session: Session, verify_token: str, payload: AppUserPassword):
     app_user = self.get_by_verify_token(session, verify_token)
+    app_user.is_verified = True
     app_user.verify_token = None
     hashed_password = get_hashed_obj(payload.password)
     app_user.password = hashed_password
