@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 import jwt
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 
 from setting import settings
 
@@ -23,13 +23,13 @@ def decode_token(token) -> dict:
     return payload
   except(jwt.DecodeError):
     raise HTTPException(
-      status_code=403,
+      status_code=status.HTTP_401_UNAUTHORIZED,
       detail='Could not validate credentials',
       headers={'WWW-Authenticate': 'Bearer'},
     )
   except(jwt.ExpiredSignatureError):
     raise HTTPException(
-      status_code=403,
+      status_code=status.HTTP_401_UNAUTHORIZED,
       detail='Token expired',
       headers={'WWW-Authenticate': 'Bearer'},
     )
