@@ -1,4 +1,8 @@
-from fastapi import Depends
+from functools import wraps
+from http import HTTPStatus
+
+from fastapi import Depends, status
+from fastapi.responses import JSONResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
@@ -13,3 +17,24 @@ async def get_current_user(data: HTTPAuthorizationCredentials = Depends(auth_sch
   payload = decode_token(data.credentials)
   app_user = app_user_service.get_by_id(session, payload['sub'])
   return app_user
+
+def auth_check(required_roles):
+  def decorator_auth(func):
+    @wraps(func)
+    def wrapper_auth(*args, **kwargs):
+      current_user = kwargs['current_user']
+      roles = current_user.roles
+      for role in roles:
+        if role.name in required_roles:
+          return func(*args, **kwargs)
+      return JSONResponse(
+        status_code=status.HTTP_403_FORBIDDEN,
+        content={
+          'error_details': None,
+          'message': HTTPStatus(403).phrase,
+          'detail': 'Not allowed to access this resource'
+        }
+      )
+        
+    return wrapper_auth
+  return decorator_auth

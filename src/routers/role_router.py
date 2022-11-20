@@ -24,7 +24,7 @@ class AppUserRouter:
     role = role_service.create(self.session, payload)
     self.session.commit()
     self.session.refresh(role)
-    return APIResponse(data=role)
+    return APIResponse[RoleResponse](data=jsonable_encoder(role))
   
   @router.get(RESOURCE + '/{id}')
   def get_by_id(self, id: uuid.UUID):

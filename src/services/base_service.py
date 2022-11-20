@@ -27,7 +27,7 @@ class CRUDBaseService(Generic[SchemaCreateType, SchemaUpdateType, SchemaResponse
     model = self.Model()
     set_value(model, payload)
     session.add(model)
-    return
+    return model
 
   def get_by_id(self, session: Session, id: uuid.UUID) -> ModelType:
     return session.query(self.Model).filter(self.Model.id == id).one()
