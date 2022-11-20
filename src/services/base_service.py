@@ -30,7 +30,7 @@ class CRUDBaseService(Generic[SchemaCreateType, SchemaUpdateType, SchemaResponse
     return
 
   def get_by_id(self, session: Session, id: uuid.UUID) -> ModelType:
-    return jsonable_encoder(session.query(self.Model).filter(self.Model.id == id).one())
+    return session.query(self.Model).filter(self.Model.id == id).one()
 
   def update_by_id(self, session: Session, id: uuid.UUID, payload: SchemaUpdateType):
     model = self.get_by_id(session, id)

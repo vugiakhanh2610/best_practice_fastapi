@@ -1,6 +1,7 @@
 import uuid
 
 from fastapi import APIRouter, Depends
+from fastapi.encoders import jsonable_encoder
 from fastapi_utils.cbv import cbv
 from sqlalchemy.orm import Session
 
@@ -28,7 +29,7 @@ class AppUserRouter:
   @router.get(RESOURCE + '/{id}')
   def get_by_id(self, id: uuid.UUID):
     data = app_user_service.get_by_id_with_role(self.session, id)
-    return APIResponse[AppUserResponse](data=data)
+    return APIResponse[AppUserResponse](data=jsonable_encoder(data))
   
   @router.put(RESOURCE +'/password/{verify_token}')
   def update_password(self, verify_token: str, payload: AppUserPassword):

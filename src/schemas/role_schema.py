@@ -12,3 +12,6 @@ class RoleUpdate(RoleCreate):
 
 class RoleResponse(RoleCreate):
   id: uuid.UUID
+
+class RoleResponsePage(RoleResponse):
+  pass
