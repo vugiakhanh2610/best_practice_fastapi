@@ -1,6 +1,7 @@
 import uuid
 
 from fastapi import APIRouter, Depends, Request
+from fastapi.encoders import jsonable_encoder
 from fastapi_utils.cbv import cbv
 from sqlalchemy.orm import Session
 
@@ -22,20 +23,24 @@ class GroupRouter:
   @router.post(RESOURCE)
   def create(self, request: Request, payload: GroupCreate, current_user = Depends(get_current_user)):
     group_service.create(self.session, payload)
+    self.session.commit()
+    return APIResponse()
     
   @router.get(RESOURCE + '/{id}')
   def get_by_id(self, request: Request, id: uuid.UUID, current_user = Depends(get_current_user)):
     data = group_service.get_by_id(self.session, id)
-    return APIResponse[GroupResponse](data=data)
+    return APIResponse[GroupResponse](data=jsonable_encoder(data))
   
   @router.put(RESOURCE + '/{id}')
   def update_by_id(self, request: Request, id: uuid.UUID, payload: GroupUpdate, current_user = Depends(get_current_user)):
     group_service.update_by_id(self.session, id, payload)
+    self.session.commit()
     return APIResponse()
   
   @router.delete(RESOURCE + '/{id}')
   def delete_by_id(self, request: Request, id: uuid.UUID, current_user = Depends(get_current_user)):
     group_service.delete_by_id(self.session, id)
+    self.session.commit()
     return APIResponse()
   
   @router.get(RESOURCE)

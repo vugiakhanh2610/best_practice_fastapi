@@ -15,7 +15,7 @@ from utils.hashing_util import get_hashed_obj
 from utils.helper_utils import set_value
 
 
-class AppUserService(CRUDBaseService[AppUserCreate, AppUserUpdate, AppUser]):
+class AppUserService(CRUDBaseService[AppUserCreate, AppUserUpdate]):
   def get_by_email(self, session: Session, email: EmailStr) -> AppUser:
     return session.query(AppUser).filter(AppUser.email == email).first()
   
@@ -25,7 +25,7 @@ class AppUserService(CRUDBaseService[AppUserCreate, AppUserUpdate, AppUser]):
       app_user = AppUser()
     elif app_user.is_verified:
       raise HTTPException(status_code=409, detail='Email already verified')
-    set_value(app_user, payload, {'roles'})
+    set_value(app_user, payload)
     app_user.is_verified = False
     
     # Generate one-time token and save into database
@@ -37,6 +37,7 @@ class AppUserService(CRUDBaseService[AppUserCreate, AppUserUpdate, AppUser]):
     data = {
       'subject': 'Invite to CarBuyer Admin portal',
       'username': payload.username,
+      'group': app_user.group.name,
       'link': f'http://localhost:10001/docs#/app_users/update_password_api_v1_app_users_password__verify_token__put/{token}'
     }
     payload = get_payload(email_to=[payload.email], template_id=template_id, data=data)

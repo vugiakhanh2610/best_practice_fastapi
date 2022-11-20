@@ -26,8 +26,8 @@ def auth_check(required_roles):
       http_method = request.method
       print(http_method)
       current_user = kwargs['current_user']
-      roles = current_user.roles
-      for role in roles:
+      group = current_user.group
+      for role in group.modules:
         if role.name in required_roles:
           return func(*args, **kwargs)
       return JSONResponse(

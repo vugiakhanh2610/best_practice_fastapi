@@ -1,6 +1,7 @@
 import uuid
 
 from fastapi import APIRouter, Depends, Request
+from fastapi.encoders import jsonable_encoder
 from fastapi_utils.cbv import cbv
 from sqlalchemy.orm import Session
 
@@ -21,21 +22,26 @@ class ModuleRouter:
   
   @router.post(RESOURCE)
   def create(self, request: Request, payload: ModuleCreate, current_user = Depends(get_current_user)):
-    module_service.create(self.session, payload)
+    module = module_service.create(self.session, payload)
+    self.session.commit()
+    self.session.refresh(module)
+    return APIResponse[ModuleResponse](data=jsonable_encoder(module))
     
   @router.get(RESOURCE + '/{id}')
   def get_by_id(self, request: Request, id: uuid.UUID, current_user = Depends(get_current_user)):
     data = module_service.get_by_id(self.session, id)
-    return APIResponse[ModuleResponse](data=data)
+    return APIResponse[ModuleResponse](data=jsonable_encoder(data))
   
   @router.put(RESOURCE + '/{id}')
   def update_by_id(self, request: Request, id: uuid.UUID, payload: ModuleUpdate, current_user = Depends(get_current_user)):
     module_service.update_by_id(self.session, id, payload)
+    self.session.commit()
     return APIResponse()
   
   @router.delete(RESOURCE + '/{id}')
   def delete_by_id(self, request: Request, id: uuid.UUID, current_user = Depends(get_current_user)):
     module_service.delete_by_id(self.session, id)
+    self.session.commit()
     return APIResponse()
   
   @router.get(RESOURCE)

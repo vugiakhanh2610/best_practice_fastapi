@@ -1,15 +1,18 @@
 from fastapi_utils.guid_type import GUID
-from sqlalchemy import Boolean, Column, ForeignKey, Table
+from sqlalchemy import Boolean, Column, ForeignKey
+from sqlalchemy.orm import relationship
 
 from database import Base
+from models.module import Module
 
-ModulePermission = Table(
-  'module_permission',
-  Base.metadata,
-  Column('group_id', GUID, ForeignKey('group.id'), primary_key=True),
-  Column('module_id', GUID, ForeignKey('module.id'), primary_key=True),
-  Column('read', Boolean, nullable=False),
-  Column('create', Boolean, nullable=False),
-  Column('update', Boolean, nullable=False),
-  Column('delete', Boolean, nullable=False)
-)
+
+class ModulePermission(Base):
+  __tablename__ = 'module_permission'
+  group_id = Column(GUID, ForeignKey('group.id'), primary_key=True)
+  module_id = Column(GUID, ForeignKey('module.id'), primary_key=True)
+  module = relationship(Module, lazy='joined')
+  read = Column(Boolean, nullable=False)
+  create = Column(Boolean, nullable=False)
+  update = Column(Boolean, nullable=False)
+  delete = Column(Boolean, nullable=False)
+  

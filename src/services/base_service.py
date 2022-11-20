@@ -8,18 +8,16 @@ from pydantic import BaseModel
 from sqlalchemy import asc, desc, func
 from sqlalchemy.orm import Query, Session
 
-from database import Base
 from schemas.listing_schema import ListingParams
 from utils.helper_utils import set_value
 
 SchemaCreateType = TypeVar('SchemaCreateType', bound=BaseModel)
 SchemaUpdateType = TypeVar('SchemaUpdateType', bound=BaseModel)
-ModelType = TypeVar('ModelType', bound=Base)
 
 
-class CRUDBaseService(Generic[SchemaCreateType, SchemaUpdateType, ModelType]):
+class CRUDBaseService(Generic[SchemaCreateType, SchemaUpdateType]):
   
-  def __init__(self, Model: ModelType) -> None:
+  def __init__(self, Model) -> None:
     self.Model = Model
   
   def create(self, session: Session, payload: SchemaCreateType):
@@ -28,7 +26,7 @@ class CRUDBaseService(Generic[SchemaCreateType, SchemaUpdateType, ModelType]):
     session.add(model)
     return model
 
-  def get_by_id(self, session: Session, id: uuid.UUID) -> ModelType:
+  def get_by_id(self, session: Session, id: uuid.UUID):
     return session.query(self.Model).filter(self.Model.id == id).one()
 
   def update_by_id(self, session: Session, id: uuid.UUID, payload: SchemaUpdateType):
@@ -41,7 +39,7 @@ class CRUDBaseService(Generic[SchemaCreateType, SchemaUpdateType, ModelType]):
     session.delete(model)
     return
   
-  def get_query(self, session: Session, condition: list):
+  def get_query(self, session: Session, condition: list = []):
     query = session.query(self.Model).filter(*condition)
     return query
   

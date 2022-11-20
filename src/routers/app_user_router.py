@@ -10,7 +10,7 @@ from database import get_session
 from schemas.api_response_schema import APIResponse, PaginatedData
 from schemas.app_user_schema import (AppUserCreate, AppUserPassword, AppUserResponse, AppUserResponsePage, AppUserUpdate)
 from schemas.listing_schema import ListingParams
-from security import auth_check, get_current_user
+from security import get_current_user
 from services.app_user_service import app_user_service
 
 router = APIRouter(tags=['app_users'])
@@ -29,9 +29,9 @@ class AppUserRouter:
     return APIResponse(data=jsonable_encoder(app_user), message=f'Please verify email {payload.email}')
   
   @router.get(RESOURCE + '/{id}')
-  @auth_check(['user'])
+  # @auth_check(['user'])
   def get_by_id(self, request: Request, id: uuid.UUID, current_user = Depends(get_current_user)):
-    data = app_user_service.get_by_id_with_role(self.session, id)
+    data = app_user_service.get_by_id_with_group(self.session, id)
     return APIResponse[AppUserResponse](data=jsonable_encoder(data))
   
   @router.get(RESOURCE + '/verify_token/{email}')

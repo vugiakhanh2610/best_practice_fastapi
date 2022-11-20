@@ -3,6 +3,8 @@ from typing import Optional
 
 from pydantic import BaseModel, EmailStr
 
+from schemas.group_schema import GroupResponse
+
 
 class AppUserCreate(BaseModel):
   username: str
@@ -11,14 +13,14 @@ class AppUserCreate(BaseModel):
   
 class AppUserUpdate(BaseModel):
   username: Optional[str]
-  # group: 
+  group_id: Optional[uuid.UUID]
 
 class AppUserPassword(BaseModel):
   password: str
 
 class AppUserResponse(AppUserCreate):
   id: uuid.UUID
-  # group: list[RoleResponse]
+  group: GroupResponse
 
 class AppUserResponsePage(BaseModel):
   id: uuid.UUID
