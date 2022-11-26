@@ -75,7 +75,7 @@ def get_session() -> Generator:
 
 def get_number_models() -> int:
   path_to_models_dir = f'{os.getcwd()}/src/models'
-  return len(fnmatch.filter(os.listdir(path_to_models_dir), '*.py'))
+  return len(fnmatch.filter(os.listdir(path_to_models_dir), '*.py')) - 1 # Not count file __init__.py
    
 async def check_db_info():
   try:
