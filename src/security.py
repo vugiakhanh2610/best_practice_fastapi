@@ -1,12 +1,12 @@
+from datetime import datetime, timezone
 from functools import wraps
-from http import HTTPStatus
 
-from fastapi import Depends, Request, status
-from fastapi.responses import JSONResponse
+from fastapi import Depends, HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from sqlalchemy import event
 from sqlalchemy.orm import Session
 
-from database import get_session
+from database import Base, get_session
 from models.app_user import AppUser
 from models.group import Group
 from services.app_user_service import app_user_service
@@ -23,17 +23,15 @@ class UserSession:
     self.user_info: AppUser = user_info
     self.session: Session   = session
     
-    # @event.listens_for(Base, 'before_insert', propagate=True)
-    # def before_insert(mapper, connect, target):
-    #   if (hasattr(target, 'deleted')):
-    #     target.deleted = False
-    #   target.created_by = user_info.username
-    #   target.created_time = datetime.utcnow().replace(tzinfo=timezone.utc)
+    @event.listens_for(Base, 'before_insert', propagate=True)
+    def before_insert(mapper, connect, target):
+      target.created_by = self.user_info.email
+      target.created_time = datetime.utcnow().replace(tzinfo=timezone.utc)
     
-    # @event.listens_for(Base, 'before_update', propagate=True)
-    # def before_update(mapper, connect, target):
-    #   target.updated_by = user_info.username
-    #   target.updated_time = datetime.utcnow().replace(tzinfo=timezone.utc)
+    @event.listens_for(Base, 'before_update', propagate=True)
+    def before_update(mapper, connect, target):
+      target.updated_by = self.user_info.email
+      target.updated_time = datetime.utcnow().replace(tzinfo=timezone.utc)
 
 auth_scheme = HTTPBearer()
 
@@ -54,40 +52,21 @@ def auth_check(required_roles: list[str]):
     def wrapper_auth(*args, **kwargs):
       self = kwargs['self']
       current_user = self.current_user.user_info
-      print(current_user)
-      request: Request = kwargs['request']
-      http_method = request.method
-      print(http_method)
       group: Group = current_user.group
       
-      if http_method == 'GET':
-        for module_permission in group.module_permissions:
-          if module_permission.module.name in required_roles:
-            if module_permission.read:
-              return func(*args, **kwargs)
-      elif http_method == 'POST':
-        for module_permission in group.module_permissions:
-          if module_permission.module.name in required_roles:
-            if module_permission.create:
-              return func(*args, **kwargs)
-      elif http_method == 'PUT':
-        for module_permission in group.module_permissions:
-          if module_permission.module.name in required_roles:
-            if module_permission.update:
-              return func(*args, **kwargs)
-      else:
-        for module_permission in group.module_permissions:
-          if module_permission.module.name in required_roles:
-            if module_permission.delete:
-              return func(*args, **kwargs)
-      return JSONResponse(
-        status_code=status.HTTP_403_FORBIDDEN,
-        content={
-          'error_details': None,
-          'message': HTTPStatus(403).phrase,
-          'detail': 'Not allowed to access this resource'
-        }
-      )
+      request: Request = kwargs['request']
+      http_method = request.method
+      
+      for module_permission in group.module_permissions:
+        if module_permission.module.name in required_roles:
+          if (
+            (http_method == 'GET' and module_permission.read)
+            or (http_method == 'POST' and module_permission.create)
+            or (http_method == 'PUT' and module_permission.update)
+            or (http_method == 'DELETE' and module_permission.delete)
+          ):
+            return func(*args, **kwargs)
+      raise HTTPException(status_code=403, detail='Not allowed to access this API')
         
     return wrapper_auth
   return decorator_auth

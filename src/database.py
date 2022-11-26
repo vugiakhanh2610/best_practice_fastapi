@@ -91,7 +91,11 @@ async def check_db_info():
       logger.info(f'Number of models: {number_models}')
       
       if int(number_tables) != number_models:
-        raise RuntimeError('Incorrect number of tables in database')
+        logger.warning('Incorrect number of tables in database')
+        drop_tables()
+        create_tables()
+        logger.info(f'Number of tables in database: {number_tables}')
+        
   except Exception as e:
     raise e
     

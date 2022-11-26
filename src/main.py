@@ -1,12 +1,13 @@
 from http import HTTPStatus
 
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 from loguru import logger
 
-from database import create_db, create_schema, create_tables
+from database import check_db_info, create_db, create_schema, create_tables
 from routers.endpoints import create_endpoints
-from setting import settings
+from security import get_current_user
+from setting import Settings, get_settings, settings
 
 
 def include_router(app: FastAPI):
@@ -38,16 +39,14 @@ def http_exception_handler(request, exception: HTTPException):
     }
   ) 
 
-# @app.get('/info', tags=['Info'], description='Full information of project', )
-# def get_info_project(settings: Settings = Depends(get_settings), credentials: HTTPAuthorizationCredentials = Security(HTTPBearer(), use_cache=False)):
-#   token = credentials.credentials
-#   decode_token(token)
-#   return settings.dict()
+@app.get('/info', tags=['Info'], description='Full information of project', )
+def get_info_project(settings: Settings = Depends(get_settings), current_user = Depends(get_current_user)):
+  return settings.dict()
 
 @app.on_event('startup')
 async def app_startup():
   logger.debug("Checking database's information")
-  # await check_db_info()
+  await check_db_info()
 
 @app.on_event('shutdown')
 def app_shutdown():

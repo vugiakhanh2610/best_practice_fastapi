@@ -1,5 +1,5 @@
 from fastapi_utils.guid_type import GUID
-from sqlalchemy import Boolean, Column, ForeignKey
+from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, String)
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -16,3 +16,7 @@ class ModulePermission(Base):
   update = Column(Boolean, nullable=False)
   delete = Column(Boolean, nullable=False)
   
+  created_by = Column(String, nullable=False)
+  created_time = Column(DateTime, nullable=False)
+  updated_by = Column(String)
+  updated_time = Column(DateTime)
