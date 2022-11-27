@@ -33,3 +33,6 @@ class AppUserResponsePage(BaseModel):
   id: uuid.UUID
   email: EmailStr
   username: str
+
+class AppUserToken(BaseModel):
+  token: str

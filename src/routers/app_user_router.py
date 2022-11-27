@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from database import get_session
 from schemas.api_response_schema import APIResponse, PaginatedData
-from schemas.app_user_schema import (AppUserCreate, AppUserPassword, AppUserResponse, AppUserResponsePage, AppUserUpdate)
+from schemas.app_user_schema import (AppUserCreate, AppUserPassword, AppUserResponse, AppUserResponsePage, AppUserToken, AppUserUpdate)
 from schemas.listing_schema import ListingParams
 from security import UserSession, auth_check, get_current_user
 from services.app_user_service import app_user_service
@@ -77,4 +77,4 @@ class UnauthenticatedRouter:
   def forgot_password(self, email: EmailStr):
     verify_token = app_user_service.forgot_password(self.session, email)
     self.session.commit()
-    return APIResponse(data={'token': verify_token}, message='Please use this token to reset password')
+    return APIResponse[AppUserToken](data=AppUserToken(token=verify_token), message='Please use this token to reset password')
