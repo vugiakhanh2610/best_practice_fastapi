@@ -16,10 +16,17 @@ from setting import settings
 
 db_connection_url = f'postgresql://{settings.DB_USER}:{settings.DB_PASSWORD}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}'
 
-engine = create_engine(url=db_connection_url, echo=False, connect_args={'options': f'-csearch_path={settings.DB_SCHEMA}'}) # echo = show-sql
+engine = create_engine(
+  url=db_connection_url,
+  echo=False,
+  connect_args={
+    'options': f'-csearch_path={settings.DB_SCHEMA}',
+    'options': '-c timezone=utc',
+  }
+)
 
 # Difference between flush and commit: https://www.youtube.com/watch?v=1atze8xe9wg&ab_channel=HowtoFixYourComputer
-Session = sessionmaker(bind=engine, autoflush=False, autocommit=False)
+Session = sessionmaker(bind=engine, autoflush=False, autocommit=False, expire_on_commit=False)
 
 # inherit from this class to create each of the database models 
 Base = declarative_base(metadata=MetaData(schema=f'{settings.DB_SCHEMA}'))

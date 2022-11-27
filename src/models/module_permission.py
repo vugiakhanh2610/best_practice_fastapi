@@ -17,6 +17,6 @@ class ModulePermission(Base):
   delete = Column(Boolean, nullable=False)
   
   created_by = Column(String, nullable=False)
-  created_time = Column(DateTime, nullable=False)
+  created_time = Column(DateTime(timezone=True), nullable=False)
   updated_by = Column(String)
-  updated_time = Column(DateTime)
+  updated_time = Column(DateTime(timezone=True))

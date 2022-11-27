@@ -19,7 +19,7 @@ class ModuleRouter:
   current_user: UserSession = Depends(get_current_user)
   
   @router.post(f'/{RESOURCE}')
-  @auth_check([RESOURCE])
+  # @auth_check([RESOURCE])
   def create(self, request: Request, payload: ModuleCreate):
     module = module_service.create(self.current_user.session, payload)
     self.current_user.session.commit()

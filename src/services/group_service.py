@@ -15,8 +15,9 @@ class GroupService(CRUDBaseService[GroupCreate, GroupUpdate]):
     group = Group()
     set_value(group, payload, {'module_permissions'})
     session.add(group)
+    session.flush()
     for data in payload.module_permissions:
-      module_permission = module_permission_service.create(session, data)
+      module_permission = module_permission_service.create(session, group.id, data)
       group.module_permissions.append(module_permission)
 
     return group

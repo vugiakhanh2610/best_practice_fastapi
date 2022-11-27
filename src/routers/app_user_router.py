@@ -60,6 +60,7 @@ class AppUserRouter:
     query = app_user_service.get_query(self.current_user.session, keyword)
     data = app_user_service.get_list(query, params)
     return APIResponse[PaginatedData[AppUserResponsePage]](data=data)
+  
 
 @cbv(router)
 class UnauthenticatedRouter:
