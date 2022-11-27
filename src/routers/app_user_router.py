@@ -77,4 +77,4 @@ class UnauthenticatedRouter:
   def forgot_password(self, email: EmailStr):
     verify_token = app_user_service.forgot_password(self.session, email)
     self.session.commit()
-    return APIResponse(data=verify_token, message='Please use this token to reset password')
+    return APIResponse(data={'token': verify_token}, message='Please use this token to reset password')

@@ -55,6 +55,8 @@ class AppUserService(CRUDBaseService[AppUserCreate, AppUserUpdate]):
     app_user = self.get_by_email(session, email)
     if not app_user:
       raise HTTPException(status_code=404, detail='User with this email not exists')
+    elif not app_user.is_verified:
+        raise HTTPException(status_code=400, detail='Account is not verified')
     token = secrets.token_urlsafe(32)
     app_user.verify_token = token
     return token
@@ -70,15 +72,6 @@ class AppUserService(CRUDBaseService[AppUserCreate, AppUserUpdate]):
   def update_by_id(self, session: Session, id: uuid.UUID, payload: AppUserUpdate):
     app_user = self.get_by_id(session, id)
     set_value(app_user, payload)
-    # roles_before_update: list = app_user.roles.copy()
-    # for role_id in payload.roles:
-    #   role = role_service.get_by_id(session, role_id)
-    #   if role not in roles_before_update:
-    #     app_user.roles.append(role)
-    #   else:
-    #     roles_before_update.remove(role)
-    # for r in roles_before_update:
-    #   app_user.roles.remove(r)
     return
   
   def get_query(self, session: Session, keyword: str = None):

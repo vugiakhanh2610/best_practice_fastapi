@@ -1,4 +1,5 @@
 alembic==1.7.7
+asyncpg
 cryptography
 databases
 fastapi
@@ -11,6 +12,7 @@ pyclean
 pydantic[email]
 pyjwt
 python-dotenv
+python-multipart==0.0.5
 requests
 sqlalchemy
 sqlalchemy_utils

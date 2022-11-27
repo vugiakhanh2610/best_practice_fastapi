@@ -1,7 +1,8 @@
 import uuid
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr
+from fastapi import HTTPException
+from pydantic import BaseModel, EmailStr, validator
 
 from schemas.group_schema import GroupResponse
 
@@ -17,6 +18,12 @@ class AppUserUpdate(BaseModel):
 
 class AppUserPassword(BaseModel):
   password: str
+  confirm_password: str
+  
+  @validator('confirm_password')
+  def match_password(cls, v, values):
+    if 'password' in values and v != values['password']:
+      raise HTTPException(status_code=422, detail='Confirm password does not match')
 
 class AppUserResponse(AppUserCreate):
   id: uuid.UUID

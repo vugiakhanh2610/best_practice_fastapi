@@ -102,7 +102,8 @@ async def check_db_info():
         drop_tables()
         create_tables()
         logger.info(f'Number of tables in database: {number_tables}')
-        
   except Exception as e:
     raise e
+  finally:
+    await db.disconnect()
     
