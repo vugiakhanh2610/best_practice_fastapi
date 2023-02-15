@@ -54,6 +54,9 @@ def auth_check(required_roles: list[str]):
       current_user = self.current_user.user_info
       group: Group = current_user.group
       
+      if not group:
+        raise HTTPException(status_code=403, detail='Access denied')
+      
       request: Request = kwargs['request']
       http_method = request.method
       
@@ -66,7 +69,7 @@ def auth_check(required_roles: list[str]):
             or (http_method == 'DELETE' and module_permission.delete)
           ):
             return func(*args, **kwargs)
-      raise HTTPException(status_code=403, detail='Not allowed to access this API')
+      raise HTTPException(status_code=403, detail='Access denied')
         
     return wrapper_auth
   return decorator_auth
