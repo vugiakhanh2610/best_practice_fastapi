@@ -27,6 +27,15 @@ def start_application():
   return app
 
 app = start_application()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        '*', # TO BE CHANGED : currently allow all for ease of development
+    ],
+    allow_credentials=True,
+    allow_methods=['*'],
+    allow_headers=['*'],
+)
 
 @app.exception_handler(HTTPException)
 def http_exception_handler(request, exception: HTTPException):
